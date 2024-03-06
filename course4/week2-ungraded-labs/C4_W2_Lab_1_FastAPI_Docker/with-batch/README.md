@@ -107,6 +107,11 @@ curl -X POST http://localhost:81/predict \
     -d @./wine-examples/batch_1.json \
     -H "Content-Type: application/json"
 ```
+Using the Windows Terminal -> solution by ChatGPT:
+```Power Shell
+Invoke-RestMethod -Uri "http://localhost:81/predict" -Method Post -ContentType "application/json" -InFile "./wine-examples/batch_1.json"
+
+```
 
 Now you should see a list with the 32 predictions (in order) for each one of the data points within the batch. **Nice work!**
 

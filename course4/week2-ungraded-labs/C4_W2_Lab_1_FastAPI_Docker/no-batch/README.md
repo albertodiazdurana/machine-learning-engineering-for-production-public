@@ -284,6 +284,27 @@ curl -X 'POST' http://localhost/predict \
   "proline":562.0
 }'
 ```
+Using the Windows Terminal -> solution from ChatGPT:
+```Windows Terminal
+$body = @{
+  alcohol = 12.6
+  malic_acid = 1.34
+  ash = 1.9
+  alcalinity_of_ash = 18.5
+  magnesium = 88.0
+  total_phenols = 1.45
+  flavanoids = 1.36
+  nonflavanoid_phenols = 0.29
+  proanthocyanins = 1.35
+  color_intensity = 2.45
+  hue = 1.04
+  od280_od315_of_diluted_wines = 2.77
+  proline = 562.0
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri http://localhost/predict -Method Post -ContentType 'application/json' -Body $body
+
+```
 
 Or you can use a `JSON` file to avoid typing a long command like this:
 

@@ -1,13 +1,14 @@
 import pickle
 import numpy as np
+from typing import List
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, conlist
 
 
 app = FastAPI(title="Predicting Wine Class")
 
 # Represents a particular wine (or datapoint)
-class Wine(BaseModel):
+class Wine_(BaseModel):
     alcohol: float
     malic_acid: float
     ash: float
@@ -22,6 +23,9 @@ class Wine(BaseModel):
     od280_od315_of_diluted_wines: float
     proline: float
 
+# Represents a batch of wines
+class Wine(BaseModel):
+    batches: List[conlist(item_type=float, min_length=13, max_length=13)]
 
 @app.on_event("startup")
 def load_clf():
@@ -36,7 +40,7 @@ def home():
     return "Congratulations! Your API is working as expected. Now head over to http://localhost:80/docs"
 
 
-@app.post("/predict")
+@app.post("/predict_")
 def predict(wine: Wine):
     data_point = np.array(
         [
@@ -61,4 +65,11 @@ def predict(wine: Wine):
     pred = clf.predict(data_point).tolist()
     pred = pred[0]
     print(pred)
+    return {"Prediction": pred}
+
+@app.post("/predict")
+def predict(wine: Wine):
+    batches = wine.batches
+    np_batches = np.array(batches)
+    pred = clf.predict(np_batches).tolist()
     return {"Prediction": pred}
