@@ -135,6 +135,20 @@ docker run -t --rm  -p 8501:8501 \
 --allow_version_labels_for_unavailable_models=true
 ```
 
+Using Windows Command Prompt or PowerShell
+Open Command Prompt or PowerShell: Close Git Bash and open a Command Prompt or PowerShell window.
+
+Navigate to Your Directory: Use the cd command to navigate to your directory, for example:
+
+cd C:\Users\adiaz\OneDrive\Dokumente\PythonScripts\machine-learning-engineering-for-production-public\course4\week3-ungraded-labs\C4_W3_Lab_3_TFS_Model_Versioning
+
+Run the Docker Command Again: Use the same Docker command, ensuring you're using the correct path to your models directory. In Command Prompt or PowerShell, the command might not require escaping or different quotation marks. Here is the command again for reference:
+
+``` Power Shell
+docker run -t --rm -p 8501:8501 --mount type=bind,source="C:/Users/adiaz/OneDrive/Dokumente/PythonScripts/machine-learning-engineering-for-production-public/course4/week3-ungraded-labs/C4_W3_Lab_3_TFS_Model_Versioning/models",target=/models/ tensorflow/serving --model_config_file=/models/models.config --model_config_file_poll_wait_seconds=60 --allow_version_labels_for_unavailable_models=true
+``` 
+Using Command Prompt or PowerShell should avoid the path interpretation issues encountered in Git Bash and correctly mount the directory. If this approach is successful, TensorFlow Serving should start without the previous error and begin serving your models as configured.
+
 By now you should understand the meaning of the `-t`, `--rm`, `-p` and `--mount` flags. In case you need a refresh let's revisit them:
 - `-t`: Attaches a pseudo-terminal to the container so you can check what is being printed in the standard streams of the container. This will allow you to see the logs printed out by TFS.
 
@@ -167,6 +181,12 @@ curl -X POST http://localhost:8501/v1/models/animals/versions/2:predict \
     -H "Content-Type: application/json"
 ```
 
+Using the Power Shell
+``` Power Shell
+$response = Invoke-WebRequest -Uri 'http://localhost:8501/v1/models/animals/versions/2:predict' -Method Post -ContentType "application/json" -InFile "./dog_example.json"
+$response.Content
+```
+
 This request should provide a response that includes the `softmax` score for each of the classes. Remember that class 0 is for birds, 1 for cats and 2 for dogs.
 
 Now ask for a prediction to the same model but this time using labels instead of versions. Notice that the URL changes slightly:
@@ -175,6 +195,11 @@ Now ask for a prediction to the same model but this time using labels instead of
 curl -X POST http://localhost:8501/v1/models/animals/labels/stable:predict \
     -d @./dog_example.json \
     -H "Content-Type: application/json"
+```
+Using the Power Shell
+```
+$response = Invoke-WebRequest -Uri 'http://localhost:8501/v1/models/animals/labels/stable:predict' -Method Post -ContentType "application/json" -InFile "./dog_example.json"
+$response.Content
 ```
 
 Since the `stable` model is the same as `version 2` you should see the same values you got from the previous requests.
